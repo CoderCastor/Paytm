@@ -118,7 +118,6 @@ const updateUser = async (req: userIdRequestType, res: Response) => {
             message: "Error while updating information",
         });
     }
-    console.log(req.userId);
 
     await UserModel.updateOne(
         {

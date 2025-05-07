@@ -28,6 +28,7 @@ const getBalance = async (req: userIdRequestType, res: Response) => {
     });
 };
 
+/* Error of replication
 const transferAmount = async (req: userIdRequestType, res: Response) => {
     const userId = req.userId;
 
@@ -82,5 +83,53 @@ const transferAmount = async (req: userIdRequestType, res: Response) => {
         });
     }
 };
+*/
+
+const transferAmount = async(req: userIdRequestType, res: Response) => {
+
+    const userId = req.userId;
+
+    const { to, amount } = req.body as transferBodyTypes;
+
+    try {
+
+        const account = await Account.findOne({ userId: req.userId })
+
+        if (!account || account.balance < amount) {
+            return res.status(400).json({
+                message: "Insufficient balance",
+            });
+        }
+
+        const toAccount = await Account.findOne({ userId: to })
+
+        if (!toAccount) {
+            return res.status(400).json({
+                message: "Invalid account",
+            });
+        }
+
+        // Perform the transfer
+        await Account.updateOne(
+            { userId: req.userId },
+            { $inc: { balance: -amount } }
+        )
+        await Account.updateOne(
+            { userId: to },
+            { $inc: { balance: amount } }
+        )
+
+        res.json({
+            message: "Transfer successful",
+        });
+    } catch (error) {
+        res.json({
+            error: "failed to transfer money",
+            err : error
+        });
+    }    
+
+}
+
 
 export { getBalance, transferAmount };
