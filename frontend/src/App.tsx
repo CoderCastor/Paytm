@@ -1,11 +1,12 @@
+import { MainRouter } from "./Router"
 
 
 function App() {
 
 
   return (
-    <div>
-      Hello
+    <div className="">
+      <MainRouter/>
     </div>
   )
 }
